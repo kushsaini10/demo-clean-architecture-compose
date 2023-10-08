@@ -100,21 +100,40 @@ private fun List(
     val list = (homeUiState as Loaded).data
     when (configuration.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
-            LazyVerticalGrid(columns = GridCells.Fixed(2), content = {
-                items(list.size) { index ->
-                    ItemUi(list[index], placeholder, navController)
-                }
-            })
+            ListLandScapeUi(list, placeholder, navController)
         }
+
         else -> {
-            LazyColumn(content = {
-                items(list) { item ->
-                    ItemUi(item, placeholder, navController)
-                }
-            })
+            ListPortraitUi(list, placeholder, navController)
 
         }
     }
+}
+
+@Composable
+private fun ListLandScapeUi(
+    list: List<Item>,
+    placeholder: Painter,
+    navController: NavHostController
+) {
+    LazyVerticalGrid(columns = GridCells.Fixed(2), content = {
+        items(list.size) { index ->
+            ItemUi(list[index], placeholder, navController)
+        }
+    })
+}
+
+@Composable
+private fun ListPortraitUi(
+    list: List<Item>,
+    placeholder: Painter,
+    navController: NavHostController
+) {
+    LazyColumn(content = {
+        items(list) { item ->
+            ItemUi(item, placeholder, navController)
+        }
+    })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,45 +148,58 @@ private fun ItemUi(item: Item, placeholder: Painter, navController: NavHostContr
         }
     ) {
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        ItemCardContentUi(item, placeholder)
+    }
+}
 
-                if (item.image.isNullOrBlank()) {
-                    Icon(
-                        modifier = Modifier.width(56.dp),
-                        painter = placeholder,
-                        contentDescription = stringResource(R.string.item_image),
-                    )
-                } else {
-                    AsyncImage(
-                        model = item.image,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .width(56.dp),
-                        contentDescription = stringResource(R.string.item_image),
-                        placeholder = placeholder,
-                        fallback = placeholder,
-                        error = placeholder
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(text = item.title, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleLarge)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = item.date)
-                }
+@Composable
+private fun ItemCardContentUi(
+    item: Item,
+    placeholder: Painter
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
+            if (item.image.isNullOrBlank()) {
+                Icon(
+                    modifier = Modifier.width(56.dp),
+                    painter = placeholder,
+                    contentDescription = stringResource(R.string.item_image),
+                )
+            } else {
+                AsyncImage(
+                    model = item.image,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .width(56.dp),
+                    contentDescription = stringResource(R.string.item_image),
+                    placeholder = placeholder,
+                    fallback = placeholder,
+                    error = placeholder
+                )
             }
-            Icon(
-                imageVector = Icons.Outlined.KeyboardArrowRight,
-                contentDescription = stringResource(R.string.open_detail_desc)
-            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Column {
+                Text(
+                    text = item.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = item.date)
+            }
         }
+        Icon(
+            imageVector = Icons.Outlined.KeyboardArrowRight,
+            contentDescription = stringResource(R.string.open_detail_desc)
+        )
     }
 }
 

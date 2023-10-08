@@ -1,8 +1,12 @@
 package com.example.testapplication.ui.composables
 
+import android.content.res.Configuration
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -73,24 +78,68 @@ fun DetailScreenUi(
 
     val scrollState = rememberScrollState(0)
 
+    val configuration = LocalConfiguration.current
+
     Box {
-        Column(modifier = Modifier
-            .verticalScroll(scrollState)
-            .padding(8.dp)) {
 
-            ItemImage(item, placeholder)
+        when (configuration.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                PortraitUi(scrollState, item, placeholder)
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = item.title, style = MaterialTheme.typography.displaySmall)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = item.date, style = MaterialTheme.typography.bodyMedium)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "${item.desc} ${item.desc} ${item.desc} ${item.desc}${item.desc}",
-                style = MaterialTheme.typography.bodyLarge
-            )
+            else -> {
+                LandscapeUi(scrollState, item, placeholder)
+            }
         }
+
         BackButton(navController)
+    }
+}
+
+@Composable
+private fun PortraitUi(
+    scrollState: ScrollState,
+    item: Item,
+    placeholder: Painter
+) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .padding(8.dp)
+    ) {
+
+        ItemImage(item, placeholder)
+        Spacer(modifier = Modifier.height(16.dp))
+        Title(item)
+        Spacer(modifier = Modifier.height(8.dp))
+        Date(item)
+        Spacer(modifier = Modifier.height(16.dp))
+        Description(item)
+    }
+}
+
+@Composable
+private fun LandscapeUi(
+    scrollState: ScrollState,
+    item: Item,
+    placeholder: Painter
+) {
+    Row(
+        modifier = Modifier
+            .padding(8.dp)
+    ) {
+
+        ItemImageLandscape(item, placeholder)
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(
+            modifier = Modifier.verticalScroll(scrollState)
+        ) {
+            Title(item)
+            Spacer(modifier = Modifier.height(8.dp))
+            Date(item)
+            Spacer(modifier = Modifier.height(16.dp))
+            Description(item)
+        }
     }
 }
 
@@ -131,6 +180,65 @@ private fun ItemImage(
             }
         }
     }
+}
+
+@Composable
+private fun ItemImageLandscape(
+    item: Item,
+    placeholder: Painter
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(0.3f),
+
+        ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+        ) {
+
+            item.image?.let {
+                AsyncImage(
+                    model = item.image,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp)),
+                    contentDescription = stringResource(R.string.item_image),
+                    placeholder = placeholder,
+                    fallback = placeholder,
+                    error = placeholder
+                )
+            } ?: kotlin.run {
+
+                Icon(
+                    modifier = Modifier.width(56.dp),
+                    painter = placeholder,
+                    contentDescription = stringResource(R.string.item_image),
+                )
+            }
+
+        }
+    }
+}
+
+@Composable
+private fun Title(item: Item) {
+    Text(text = item.title, style = MaterialTheme.typography.displaySmall)
+}
+
+@Composable
+private fun Date(item: Item) {
+    Text(text = item.date, style = MaterialTheme.typography.bodyMedium)
+}
+
+@Composable
+private fun Description(item: Item) {
+    Text(
+        text = "${item.desc} ${item.desc} ${item.desc} ${item.desc}${item.desc}",
+        style = MaterialTheme.typography.bodyLarge
+    )
 }
 
 @Composable
