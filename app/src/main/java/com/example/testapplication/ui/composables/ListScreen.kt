@@ -166,39 +166,57 @@ private fun ItemCardContentUi(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
 
-            if (item.image.isNullOrBlank()) {
-                Icon(
-                    modifier = Modifier.width(56.dp),
-                    painter = placeholder,
-                    contentDescription = stringResource(R.string.item_image),
-                )
-            } else {
-                AsyncImage(
-                    model = item.image,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .width(56.dp),
-                    contentDescription = stringResource(R.string.item_image),
-                    placeholder = placeholder,
-                    fallback = placeholder,
-                    error = placeholder
-                )
-            }
+            ItemImage(item, placeholder)
             Spacer(modifier = Modifier.width(8.dp))
-            Column {
-                Text(
-                    text = item.title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = item.date)
-            }
+            ItemInfo(item)
         }
+        Arrow()
+    }
+}
+
+@Composable
+private fun Arrow() {
+    Icon(
+        imageVector = Icons.Outlined.KeyboardArrowRight,
+        contentDescription = stringResource(R.string.open_detail_desc)
+    )
+}
+
+@Composable
+private fun ItemInfo(item: Item) {
+    Column {
+        Text(
+            text = item.title,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(text = item.date)
+    }
+}
+
+@Composable
+private fun ItemImage(
+    item: Item,
+    placeholder: Painter
+) {
+    if (item.image.isNullOrBlank()) {
         Icon(
-            imageVector = Icons.Outlined.KeyboardArrowRight,
-            contentDescription = stringResource(R.string.open_detail_desc)
+            modifier = Modifier.width(56.dp),
+            painter = placeholder,
+            contentDescription = stringResource(R.string.item_image),
+        )
+    } else {
+        AsyncImage(
+            model = item.image,
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .width(56.dp),
+            contentDescription = stringResource(R.string.item_image),
+            placeholder = placeholder,
+            fallback = placeholder,
+            error = placeholder
         )
     }
 }

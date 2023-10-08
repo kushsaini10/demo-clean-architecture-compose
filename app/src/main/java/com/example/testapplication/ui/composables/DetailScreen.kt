@@ -69,7 +69,7 @@ fun DetailScreen(
 }
 
 @Composable
-fun DetailScreenUi(
+private fun DetailScreenUi(
     item: Item,
     navController: NavHostController
 ) {

@@ -17,14 +17,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.testapplication.navigation.Routes
-import com.example.testapplication.ui.activities.MainActivity
 import com.example.testapplication.ui.theme.TestApplicationTheme
 import com.example.testapplication.viewmodels.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun MainActivity.App(
+fun App(
     appViewModel: AppViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
