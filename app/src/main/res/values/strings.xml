@@ -4,4 +4,5 @@
     <string name="no_internet">You are not connected to internet! Please retry.</string>
     <string name="common_error">Something went wrong! Please retry.</string>
     <string name="open_detail_desc">open detail</string>
+    <string name="go_back">Go back</string>
 </resources>

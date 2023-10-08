@@ -55,7 +55,11 @@ fun MainActivity.App(
                 ) {
 
                     it.arguments?.getInt("id")?.let { id ->
-                        DetailScreen(itemId = id, appViewModel = appViewModel)
+                        DetailScreen(
+                            itemId = id,
+                            appViewModel = appViewModel,
+                            navController = navController
+                        )
                     }
                 }
             }
