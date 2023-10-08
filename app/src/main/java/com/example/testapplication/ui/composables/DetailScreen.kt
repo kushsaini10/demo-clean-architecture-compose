@@ -111,8 +111,12 @@ private fun PortraitUi(
         ItemImage(item, placeholder)
         Spacer(modifier = Modifier.height(16.dp))
         Title(item)
-        Spacer(modifier = Modifier.height(8.dp))
-        Date(item)
+
+        if (item.date.isBlank().not()) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Date(item)
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         Description(item)
     }
@@ -135,8 +139,12 @@ private fun LandscapeUi(
             modifier = Modifier.verticalScroll(scrollState)
         ) {
             Title(item)
-            Spacer(modifier = Modifier.height(8.dp))
-            Date(item)
+
+            if (item.date.isBlank().not()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Date(item)
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
             Description(item)
         }
@@ -236,7 +244,7 @@ private fun Date(item: Item) {
 @Composable
 private fun Description(item: Item) {
     Text(
-        text = "${item.desc} ${item.desc} ${item.desc} ${item.desc}${item.desc}",
+        text = item.desc,
         style = MaterialTheme.typography.bodyLarge
     )
 }
