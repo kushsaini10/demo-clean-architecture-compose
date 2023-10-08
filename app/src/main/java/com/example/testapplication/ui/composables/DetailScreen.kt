@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,14 +46,16 @@ fun DetailScreen(
     navController: NavHostController
 ) {
 
-    val itemState = appViewModel.itemDetailFlow.collectAsState(initial = null)
+    val itemState by appViewModel.itemDetailFlow.collectAsState()
 
-    LaunchedEffect(key1 = itemId, block = {
-        appViewModel.getItem(itemId)
-    })
+    if (itemState?.id == null || itemState?.id != itemId) {
+        LaunchedEffect(key1 = itemId, block = {
+            appViewModel.getItem(itemId)
+        })
+    }
 
     Surface {
-        itemState.value?.let { item ->
+        itemState?.let { item ->
             DetailScreenUi(item, navController)
         } ?: kotlin.run {
             LoadingUi()

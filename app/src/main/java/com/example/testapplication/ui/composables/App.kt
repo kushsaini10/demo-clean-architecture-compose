@@ -44,7 +44,11 @@ fun MainActivity.App(
             ) {
 
                 composable(route = Routes.ListScreen) {
-                    ListScreen(homeUiState, navController)
+                    ListScreen(
+                        homeUiState = homeUiState,
+                        appViewModel = appViewModel,
+                        navController = navController
+                    )
                 }
 
                 composable(

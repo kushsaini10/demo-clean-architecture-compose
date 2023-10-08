@@ -30,8 +30,8 @@ class AppViewModel(
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(Loading)
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    private val _itemDetailFlow = MutableSharedFlow<Item>()
-    val itemDetailFlow = _itemDetailFlow.asSharedFlow()
+    private val _itemDetailFlow = MutableStateFlow<Item?>(null)
+    val itemDetailFlow = _itemDetailFlow.asStateFlow()
 
     private val repository by lazy {
         Repository(weakApp = weakApp, service = Network.service)
@@ -39,6 +39,7 @@ class AppViewModel(
 
     fun getItems() {
         viewModelScope.launch(Dispatchers.IO) {
+            _uiState.emit(Loading)
 
             when (val apiResponse = repository.getItems()) {
                 is Success -> {

@@ -23,13 +23,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appViewModel.getItems()
-
-//        CoroutineScope(Dispatchers.Main).launch {
-//            viewModel.uiState.collect {
-//                Log.d("KUSH", "state")
-//            }
-//        }
+        if (savedInstanceState == null) {
+            appViewModel.getItems()
+        }
         setContent {
             App(appViewModel)
         }

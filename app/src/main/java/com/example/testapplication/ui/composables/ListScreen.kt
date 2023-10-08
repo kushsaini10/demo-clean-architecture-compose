@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,10 +45,12 @@ import com.example.testapplication.ui.state.Error
 import com.example.testapplication.ui.state.Loaded
 import com.example.testapplication.ui.state.Loading
 import com.example.testapplication.ui.state.UiState
+import com.example.testapplication.viewmodels.AppViewModel
 
 @Composable
 fun ListScreen(
     homeUiState: UiState,
+    appViewModel: AppViewModel,
     navController: NavHostController
 ) {
 
@@ -55,7 +58,7 @@ fun ListScreen(
 
         when (homeUiState) {
             is Error -> {
-                ErrorUi(homeUiState)
+                ErrorUi(homeUiState, appViewModel)
             }
 
             is Loaded -> {
@@ -70,11 +73,19 @@ fun ListScreen(
 }
 
 @Composable
-private fun ErrorUi(homeUiState: UiState) {
-    Text(
-        text = (homeUiState as Error).message
-            ?: stringResource(id = R.string.common_error)
-    )
+private fun ErrorUi(homeUiState: UiState, appViewModel: AppViewModel) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = (homeUiState as Error).message
+                    ?: stringResource(id = R.string.common_error)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = { appViewModel.getItems() }) {
+                Text(text = stringResource(R.string.btn_retry))
+            }
+        }
+    }
 }
 
 @Composable
