@@ -5,25 +5,25 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.testapplication.ui.composables.ListUi
-import com.example.testapplication.viewmodels.HomeViewModel
+import com.example.testapplication.ui.composables.App
+import com.example.testapplication.viewmodels.AppViewModel
 import java.lang.ref.WeakReference
 
 class MainActivity : ComponentActivity() {
 
     private val factory = object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return  HomeViewModel(WeakReference(application)) as T
+            return  AppViewModel(WeakReference(application)) as T
         }
     }
 
-    private val homeViewModel: HomeViewModel by lazy {
-        ViewModelProvider(this, factory)[HomeViewModel::class.java]
+    private val appViewModel: AppViewModel by lazy {
+        ViewModelProvider(this, factory)[AppViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        homeViewModel.getItems()
+        appViewModel.getItems()
 
 //        CoroutineScope(Dispatchers.Main).launch {
 //            viewModel.uiState.collect {
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
 //            }
 //        }
         setContent {
-            ListUi(homeViewModel)
+            App(appViewModel)
         }
     }
 }

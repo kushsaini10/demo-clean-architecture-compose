@@ -69,7 +69,7 @@ class ParseItemsUsecase {
     ): String? {
         try {
             val dateTime = LocalDateTime.parse(date, formatter)
-            val outputFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+            val outputFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
                 .withLocale(Locale.getDefault())
             return dateTime.format(outputFormatter)
         } catch (error: Exception) {

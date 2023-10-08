@@ -15,4 +15,9 @@ interface ItemsDao {
     @Upsert
     suspend fun upsertAll(vararg items: Item)
 
+    @Query("SELECT * FROM item WHERE id = :itemId")
+    fun getItemByTitle(itemId: Int): Item
+
+    @Query("DELETE FROM item")
+    fun purgeAll()
 }

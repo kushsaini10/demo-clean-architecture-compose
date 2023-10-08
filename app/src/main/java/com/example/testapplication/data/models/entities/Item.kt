@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class Item(
 
-    @PrimaryKey
     val title: String,
 
     val desc: String,
@@ -14,4 +13,8 @@ data class Item(
     val date: String,
 
     val image: String?
-)
+) {
+
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+}

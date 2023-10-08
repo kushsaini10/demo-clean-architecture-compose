@@ -15,18 +15,23 @@ import com.example.testapplication.ui.state.Loaded
 import com.example.testapplication.ui.state.Loading
 import com.example.testapplication.ui.state.UiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
-class HomeViewModel(
+class AppViewModel(
     private val weakApp: WeakReference<Application>
 ) : AndroidViewModel(weakApp.get()!!) {
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(Loading)
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+
+    private val _itemDetailFlow = MutableSharedFlow<Item>()
+    val itemDetailFlow = _itemDetailFlow.asSharedFlow()
 
     private val repository by lazy {
         Repository(weakApp = weakApp, service = Network.service)
@@ -66,6 +71,13 @@ class HomeViewModel(
                 message = weakApp.get()?.resources?.getString(message)
             )
         )
+    }
+
+    fun getItem(itemId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val item = repository.getItem(itemId)
+            _itemDetailFlow.emit(item)
+        }
     }
 
 }

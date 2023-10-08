@@ -10,7 +10,6 @@ import com.example.testapplication.data.models.entities.Success
 import com.example.testapplication.network.ApiService
 import com.example.testapplication.network.Network
 import com.example.testapplication.usecase.ParseItemsUsecase
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.take
 import java.lang.ref.WeakReference
@@ -26,7 +25,20 @@ class Repository(private val weakApp: WeakReference<Application>, private val se
             loadFromDb()
         } else {
             // try to hit network
-            loadFromNetwork()
+            val apiResponse = loadFromNetwork()
+
+            if (apiResponse is Failure) {
+
+                // load from db
+                val dbResponse = loadFromDb()
+                if (dbResponse is Failure) {
+                    apiResponse // return failure response
+                } else {
+                    dbResponse
+                }
+            } else {
+                apiResponse
+            }
         }
     }
 
@@ -35,7 +47,11 @@ class Repository(private val weakApp: WeakReference<Application>, private val se
             val response = service.items().execute()
             val apiResponse = ParseItemsUsecase().execute(response)
             updateDatabase(apiResponse)
-            apiResponse
+            if (apiResponse is Success) {
+                loadFromDb() // we need auto-generated primary key ids for navigation
+            } else {
+                apiResponse
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             Failure(false, e)
@@ -44,6 +60,7 @@ class Repository(private val weakApp: WeakReference<Application>, private val se
 
     private suspend fun updateDatabase(apiResponse: ApiResponse<List<Item>>) {
         if (apiResponse is Success) {
+                Database.database.itemsDao().purgeAll()
             Database.database.itemsDao().upsertAll(*apiResponse.data.toTypedArray())
         }
     }
@@ -57,4 +74,7 @@ class Repository(private val weakApp: WeakReference<Application>, private val se
         }
     }
 
+    suspend fun getItem(itemId: Int): Item {
+        return Database.database.itemsDao().getItemByTitle(itemId)
+    }
 }
